@@ -1,0 +1,80 @@
+---
+title: "carRm_RNA-seq_MAP-SM"
+author: "Sergio Mares"
+date: "2/23/2021"
+output: html_document
+---
+
+install.packages("gplots")
+install.packages("heatmap.plus")
+install.packages("RColorBrewer")
+
+library("gplots")
+library("ggplot2")
+library("heatmap.plus")
+library("RColorBrewer")
+library(edgeR)
+library(heatmaply)
+
+# Import Data
+
+PPD<- read.csv("~/Desktop/2021/MAP Lab | RNA Seq/CalC Data/SEP02-2020/Post-MAPKING Meeting/Normalized count/Processed_Data.csv",row.names = 1)
+RGC<- read.csv("~/Desktop/2021/MAP Lab | RNA Seq/CalC Data/SEP02-2020/Post-MAPKING Meeting/",row.names = 1)
+
+View(PPD)
+
+# Set the groups of genes to find
+
+Pyoverdine = "PA2426|PA2386|PA2392|PA2393|PA2394|PA2395|PA2397|PA2398|PA2399|PA2400|PA2403|PA2412|PA2413|PA2424|PA2425"
+Pili = "PA4547|PA4546|PA0412|PA0411|PA0410|PA0409|PA0408|PA3805|PA4527"
+Flagella = "PA1460|PA4953|PA4954|PA1449|PA1448|PA1447|PA1446|PA1104|PA1103|PA1094|PA1078|PA1082|PA1081|PA1086|PA1100|PA1083|PA1091|PA3351"
+Rhammolipid = "PA3479|PA3478"
+topgenes <- PPD[1:400,]
+
+# Find the genes in Normalized data, and set as a matrix
+
+tp <- as.matrix(t(topgenes))
+
+Bio <-PPD[grepl(Pyoverdine,row.names(PPD)),]
+input <- as.matrix(tp)
+
+# Generate the heatmap
+
+heatmap.2(input, 
+          
+          trace="none",
+          
+          key=TRUE, keysize=1.5,
+          
+          # Color key + Density info
+          col=Spectral(50), Rowv=F,
+          
+          cexRow = 1,cexCol = 0.1,margins = c(5,5), xlab=NULL,
+          scale = "row", 
+          hclust=function(x) hclust(x,method="average"))
+
+heatmap(input)
+
+setwd("~/Desktop/2021/MAP Lab | RNA Seq/CalC Data/SEP02-2020/iDEP Analysis/DESeq2")
+
+
+?col=redgreen
+
+?edgeR
+
+install.packages("heatmaply")
+
+raw_gene <- read.csv("~/Desktop/2021/MAP Lab | RNA Seq/CalC Data/SEP02-2020/CSV files/Raw-genecount.csv",row.names = 1)
+
+normalize(raw_gene) -> norm_data
+View(norm_data)
+
+input2 <- as.matrix(t(norm_data))
+
+heatmaply(
+  input, 
+  xlab = "Genes",
+  ylab = "Conditions", 
+  main = "calC RNA Seq Data"
+)
+ 
